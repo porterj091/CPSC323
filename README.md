@@ -9,7 +9,11 @@ It should create these files
 * y.tab.c
 * project.out _This is executable_
 
+##How to use it on linux
+
+	./project.out < final.txt
+
 ###How to Compile this 
-yacc -d project.y
-lex project.l
-gcc lex.yy.c y.tab.c -o project.out
+1. yacc -d project.y
+2. lex project.l
+3. gcc lex.yy.c y.tab.c -o project.out

@@ -10,7 +10,7 @@ void yyerror (char *s);
 %start line
 %token PRINT
 %token VAR
-%token BEGIN
+%token beginning
 %token INTEGER
 %token PROGRAM
 %token END
@@ -20,17 +20,17 @@ void yyerror (char *s);
 
 %%
 
-line : PROGRAM pname ';' VAR declist ';' BEGIN statlist END ;
+line : PROGRAM pname';' VAR declist';' beginning statlist END ;
 
 pname 	: ID						{ $$ = $1; } 
 		;
-declist : dec ':' type							
+declist : dec ':' type	
 		;
 dec 	: ID',' dec 
-		| ID
+		| ID						{ $$ = $1; }
 		;
 
-statlist	: stat';'
+statlist	: stat';'				{ $$ = $1; }
 			| stat';' statlist					
 			;
 
@@ -40,24 +40,26 @@ stat	: print
 
 print	: PRINT '('output')'					
 		;
+
 output	: ID									
 		;
-assign	: ID = expr					{ $$ = $1; }	
+
+assign	: ID '=' expr					{ $$ = $1; printf("Assignning");}	
 		;
 
 expr	: term						{ $$ = $1; }
-		| expr '+' term				{ $$ = $1 + $3; }	
-		| expr '-' term				{ $$ = $1 - $3; }
+		| expr '+' term				{ $$ = $1 + $3; printf("Recognize +"); }	
+		| expr '-' term				{ $$ = $1 - $3; printf("Recognize -"); }
 		;
 
-term 	: term '*' factor			{ $$ = $1 * $3; }
-		| term '/' factor			{ $$ = $1 / $3; }
+term 	: term '*' factor			{ $$ = $1 * $3; printf("Recognize *"); }
+		| term '/' factor			{ $$ = $1 / $3; printf("Recognize /"); }
 		| factor					{ $$ = $1; }
 		;
 
 factor	: ID						{ $$ = $1; }
 		| number					{ $$ = $1; }
-		| '(' expr ')'
+		| '(' expr ')'				{ $$ = $2; }
 		;
 
 type	: INTEGER					{ $$ = $1; }

@@ -1,17 +1,24 @@
 %{
 	#include "y.tab.h"
+	#include <stdlib.h>
+	#include <stdio.h>
+
+	extern yylval;
 %}
 
 %%
-("(*")(.|\n)*("*)") { printf("Deleting comment");}
+("(*")(.|\n)*("*)") { printf("Deleting comment\n"); }
 "PROGRAM"			{ return PROGRAM; }
 "VAR"				{ return VAR; }
 "INTEGER"			{ return INTEGER; }
-"BEGIN"				{ return BEGIN; }
+"BEGIN"				{ return beginning; }
 "PRINT"				{ return PRINT; }
 "END."				{ return END; }
 [a-f][a-f0-9]		{ return ID; }
-[0-9]+				{ return number; }
+[0-9]+				{ 	
+						yylval = atof(yytext);
+						return number; 
+					}
 [ \t\n] 			{}
 [-+=:"();]			{ return yytext[0]; }
 
