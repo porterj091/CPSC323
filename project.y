@@ -46,21 +46,21 @@ print	: PRINT'('output')'
 output	: ID									
 		;
 
-assign	: ID '=' expr				{ $$ = $1; printf("Assignning");}	
+assign	: ID '=' expr					{ $$ = $1; printf("Assignning\n");}	
 		;
 
 expr	: term						{ $$ = $1; }
-		| expr '+' term				{ $$ = $1 + $3; printf("Recognize +"); }	
+		| expr '+' term				{ $$ = $1 + $3; printf("Recognize +\n"); }	
 		| expr '-' term				{ $$ = $1 - $3; printf("Recognize -"); }
 		;
 
-term 	: term '*' factor			{ $$ = $1 * $3; printf("Recognize *"); }
-		| term '/' factor			{ $$ = $1 / $3; printf("Recognize /"); }
-		| factor					{ $$ = $1; }
+term 	: term '*' factor				{ $$ = $1 * $3; printf("Recognize *\n"); }
+		| term '/' factor			{ $$ = $1 / $3; printf("Recognize /\n"); }
+		| factor				{ $$ = $1; }
 		;
 
 factor	: ID						{ $$ = $1; }
-		| number					{ $$ = $1; }
+		| number				{ $$ = $1; }
 		| '(' expr ')'				{ $$ = $2; }
 		;
 
@@ -80,4 +80,5 @@ void yyerror (const char *s)
 {
 	extern int yylineno;
 	printf("%s on line %d\n", s, yylineno);
+
 }

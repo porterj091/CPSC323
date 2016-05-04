@@ -1,4 +1,4 @@
-(*  Program Name: Spring 2015
+	(*  Program Name: Spring 2015
 	     Final Project
 	     Name: Nathan Reed
 	---------------------------------------------------*)
@@ -10,10 +10,11 @@
 	   ab5   =  5    ;
 	   cb  =10;
 	   PRINT(‘ab5=’,    ab5);
-	(* compute and print the total of a and c  *)
+	(* compute and print the vtotal of a and c  *)
 	   eb=  cb + ab5  ;
 	   PRINT(‘eb=’   ,eb )  ;
 
 	   be  =  2*ab5 +  eb;
 	   PRINT(   be  )   ;
 	END.
+
