@@ -1,8 +1,10 @@
 %{
 
-void yyerror (char *s);
+void yyerror (const char *s);
 #include <stdio.h>
 #include <stdlib.h>
+
+
 
 %}
 
@@ -38,13 +40,13 @@ stat	: print
 		| assign
 		;
 
-print	: PRINT '('output')'					
+print	: PRINT'('output')'					
 		;
 
 output	: ID									
 		;
 
-assign	: ID '=' expr					{ $$ = $1; printf("Assignning");}	
+assign	: ID '=' expr				{ $$ = $1; printf("Assignning");}	
 		;
 
 expr	: term						{ $$ = $1; }
@@ -74,7 +76,8 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void yyerror (char *s)
+void yyerror (const char *s)
 {
-	printf("%s\n", s);
+	extern int yylineno;
+	printf("%s on line %d\n", s, yylineno);
 }

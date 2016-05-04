@@ -1,7 +1,4 @@
-(*  Program Name: Spring 2015
-	     Final Project
-	     Name: Nathan Reed
-	---------------------------------------------------*)
+
 	PROGRAM aba13;
 	VAR
 

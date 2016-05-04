@@ -2,12 +2,16 @@
 	#include "y.tab.h"
 	#include <stdlib.h>
 	#include <stdio.h>
+	int white = 0;
 
 	extern yylval;
 %}
 
+%option yylineno
+
 %%
 ("(*")(.|\n)*("*)") { printf("Deleting comment\n"); }
+[\t\n' '] 			{ printf("Delete whitespace: %d\n", white); white++;}
 "PROGRAM"			{ return PROGRAM; }
 "VAR"				{ return VAR; }
 "INTEGER"			{ return INTEGER; }
@@ -19,7 +23,7 @@
 						yylval = atof(yytext);
 						return number; 
 					}
-[ \t\n] 			{}
+
 [-+=:"();]			{ return yytext[0]; }
 
 . 					{ECHO; yyerror ("Unexpected character");}
