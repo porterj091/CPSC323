@@ -4,6 +4,18 @@ void yyerror (const char *s);
 #include <stdio.h>
 #include <stdlib.h>
 
+struct CaptainsLog
+{
+    FILE *flptr;
+    
+} c;
+
+void Logging(char * msg)
+{
+    fprintf(c.flptr, "%s", msg);
+    
+}
+
 
 
 %}
@@ -23,9 +35,9 @@ void yyerror (const char *s);
 
 %%
 
-line : PROGRAM{ printf("Found PROGRAM Keyword\n"); } pname';' VAR declist';' beginning { printf("Found BEGIN Keyword\n"); }statlist END { printf("Found END. Keyword\n Terminate program\n"); } ;
+line : PROGRAM{ Logging("Found PROGRAM Keyword\n"); } pname';' VAR declist';' beginning { Logging("Found BEGIN Keyword\n"); }statlist END { Logging("Found END. Keyword\n Terminate program\n"); } ;
 
-pname 	: ID						{ $$ = $1; printf("Found program name\n"); }
+pname 	: ID						{ $$ = $1; Logging("Found program name\n"); }
 		;
 declist : dec ':' type	
 		;
@@ -33,8 +45,8 @@ dec 	: ID',' dec
 		| ID						{ $$ = $1; }
 		;
 
-statlist	: stat';'				{ $$ = $1; printf("Found last stat;\n"); }
-            | stat';' statlist       { printf("Looking for more stat;\n"); }
+statlist	: stat';'				{ $$ = $1; Logging("Found last stat;\n"); }
+            | stat';' statlist       { Logging("Looking for more stat;\n"); }
 			;
 
 stat	: print
@@ -44,20 +56,20 @@ stat	: print
 print	: PRINT'(' output ')'			{}
 		;
 
-output	: QUOTE',' ID                  { $$ = $3; printf("Printing string = \n"); }
-        | ID                            { $$ = $1; printf("Printing just ID\n"); }
+output	: QUOTE',' ID                  { $$ = $3; Logging("Printing string = \n"); }
+        | ID                            { $$ = $1; Logging("Printing just ID\n"); }
 		;
 
-assign	: ID '=' expr					{ $$ = $1; printf("Assignning\n");}
+assign	: ID '=' expr					{ $$ = $1; Logging("Assignning\n");}
 		;
 
 expr	: term						{ $$ = $1; }
-		| expr '+' term				{ $$ = $1 + $3; printf("Recognize +\n"); }	
-		| expr '-' term				{ $$ = $1 - $3; printf("Recognize -\n"); }
+		| expr '+' term				{ $$ = $1 + $3; Logging("Recognize +\n"); }	
+		| expr '-' term				{ $$ = $1 - $3; Logging("Recognize -\n"); }
 		;
 
-term 	: term '*' factor				{ $$ = $1 * $3; printf("Recognize *\n"); }
-		| term '/' factor			{ $$ = $1 / $3; printf("Recognize /\n"); }
+term 	: term '*' factor				{ $$ = $1 * $3; Logging("Recognize *\n"); }
+		| term '/' factor			{ $$ = $1 / $3; Logging("Recognize /\n"); }
 		| factor				{ $$ = $1; }
 		;
 
@@ -66,13 +78,19 @@ factor	: ID						{ $$ = $1; }
 		| '(' expr ')'				{ $$ = $2; }
 		;
 
-type	: INTEGER					{ $$ = $1; printf("Found type\n"); }
+type	: INTEGER					{ $$ = $1; Logging("Found type\n"); }
 		;
 
 %%
 
 int main(int argc, char *argv[])
 {
+    c.flptr = fopen("log.txt", "w");
+    if (c.flptr == NULL)
+    {
+        printf("Error!\n");
+        return 1;
+    }
 	yyparse();
 
 	return 0;

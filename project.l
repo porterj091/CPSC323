@@ -5,6 +5,7 @@
 	int white = 0;
 
 	extern yylval;
+    extern c;
 %}
 
 %option yylineno
@@ -12,7 +13,7 @@
 %x C_COMMENT
 %%
 "(*"				{ BEGIN(C_COMMENT);}
-<C_COMMENT>"*)"			{ BEGIN(INITIAL); printf("Deleting Comment\n"); }
+<C_COMMENT>"*)"			{ BEGIN(INITIAL); Logging("Deleting Comment\n"); }
 <C_COMMENT>. 			{}
 "PROGRAM"			{ return PROGRAM; }
 "VAR"				{ return VAR; }
