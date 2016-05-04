@@ -5,24 +5,26 @@
 
 	extern yylval;
 %}
-
+%x C_COMMENT
 %%
-("(*")(.|\n)*("*)") { printf("Deleting comment\n"); }
+"(*"				{ BEGIN(C_COMMENT);}
+<C_COMMENT>"*)"			{ BEGIN(INITIAL); printf("Deleting Comment\n"); }
+<C_COMMENT>. 			{ }
 "PROGRAM"			{ return PROGRAM; }
 "VAR"				{ return VAR; }
 "INTEGER"			{ return INTEGER; }
 "BEGIN"				{ return beginning; }
 "PRINT"				{ return PRINT; }
 "END."				{ return END; }
-[a-f][a-f0-9]		{ return ID; }
+[a-f][a-f0-9]*			{ return ID; }
 [0-9]+				{ 	
 						yylval = atof(yytext);
 						return number; 
 					}
 [ \t\n] 			{}
-[-+=:"();]			{ return yytext[0]; }
+[-+=:,"();\']			{ return yytext[0]; }
 
-. 					{ECHO; yyerror ("Unexpected character");}
+. 				{ECHO; yyerror ("Unexpected character");}
 
 %%
 
