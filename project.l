@@ -24,7 +24,7 @@
 \'(\\.|[^"])*\'     { return QUOTE; }
 [a-f][a-f0-9]*		{ return ID; }
 [0-9]+				{ 	
-						yylval = atof(yytext);
+						yylval = atoi(yytext);
 						return number; 
 					}
 [ \t\n] 			{}
