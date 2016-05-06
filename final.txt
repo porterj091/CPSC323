@@ -9,7 +9,7 @@
 	BEGIN
 	   ab5   =  5    ;
 	   cb  =10;
-	   PRINT('ab5=',    ab5);
+	   PRINT('ab5='    ,ab5) ;
 	(* compute and print the vtotal of a and c  *)
 	   eb=  cb + ab5  ;
 	   PRINT('eb='   ,eb )  ;

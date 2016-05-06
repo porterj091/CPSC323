@@ -46,7 +46,7 @@ declist : dec ':' type				{ $$ = $1 + $3;  }
 
 dec 	: ID',' dec 				{ $$ = $1 + $3; }
 		| ID dec					{ yyerror("Missing , "); }
-		| ID						{ $$ = $1; printf("%d", $1); }
+		| ID						{ $$ = $1; }
 		;
 
 statlist	: stat';' statlist	    { $$ = $1; Logging("Looking for more stat;\n"); }
@@ -58,10 +58,10 @@ stat	: print
 		| assign
 		;
 
-print	: PRINT'(' output ')'		{ $$ = $3; fprintf(c.output_file, "%s\n", "cout << ");}
+print	: PRINT'(' output ')'		{ $$ = $3; }
 		;
 
-output	: QUOTE',' ID               { $$ = $1; Logging("Printing string = \n"); }
+output	: QUOTE',' ID               { $$ = $1; Logging("Printing string = \n"); fprintf(c.output_file, "%d\n", ID);}
         | ID                        { $$ = $1; Logging("Printing just ID\n"); }
 		;
 
