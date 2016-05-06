@@ -1,6 +1,7 @@
 # CPSC323
 Our git repository for our CPSC323 Compiler Project
-
+#How to compile 
+1.run "make" on the command line
 ##To create all the files run the load.sh script
 I am using linux don't know how to use this in other operating systems
 It should create these files

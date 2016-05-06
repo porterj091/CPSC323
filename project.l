@@ -5,7 +5,7 @@
     #include <string.h>
 	int white = 0;
 
-	extern yylval;
+    extern yylval;
     extern c;
 %}
 
