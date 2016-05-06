@@ -7,7 +7,6 @@ void Logging(const char *msg);
 #include <stdlib.h>
 
 extern int yylineno;
-
 char *str[15];
 
 struct CaptainsLog
@@ -47,7 +46,7 @@ declist : dec ':' type				{ $$ = $1 + $3;  }
 
 dec 	: ID',' dec 				{ $$ = $1 + $3; }
 		| ID dec					{ yyerror("Missing , "); }
-		| ID						{ $$ = $1; }
+		| ID						{ $$ = $1; printf("%d", $1); }
 		;
 
 statlist	: stat';' statlist	    { $$ = $1; Logging("Looking for more stat;\n"); }
@@ -59,7 +58,7 @@ stat	: print
 		| assign
 		;
 
-print	: PRINT'(' output ')'		{ $$ = $3; }
+print	: PRINT'(' output ')'		{ $$ = $3; fprintf(c.output_file, "%s\n", "cout << ");}
 		;
 
 output	: QUOTE',' ID               { $$ = $1; Logging("Printing string = \n"); }
@@ -81,7 +80,7 @@ term 	: term '*' factor			{ $$ = $1 * $3; Logging("Recognize *\n"); }
 		;
 
 factor	: ID						{ $$ = $1; }
-		| number					{ $$ = $1; }
+		| number					{ $$ = $1; printf("%d", $1);}
 		| '(' expr ')'				{ $$ = $2; }
 		;
 
@@ -102,6 +101,8 @@ int main(int argc, char *argv[])
 
 	// Start the compiler
 	yyparse();
+    fprintf(c.output_file, "%s\n", "return 0;");
+    fprintf(c.output_file, "%s\n", "}");
 	fclose(c.log_file);
 	fclose(c.output_file);
 	return 0;
