@@ -59,10 +59,10 @@ stat	: print
 		| assign
 		;
 
-print	: PRINT'(' output ')'		{$$ = $3;}
+print	: PRINT'(' output ')'		{ $$ = $3; }
 		;
 
-output	: QUOTE',' ID               { $$ = $3; Logging("Printing string = \n"); }
+output	: QUOTE',' ID               { $$ = $1; Logging("Printing string = \n"); }
         | ID                        { $$ = $1; Logging("Printing just ID\n"); }
 		;
 

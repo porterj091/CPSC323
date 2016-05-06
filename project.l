@@ -2,6 +2,7 @@
 	#include "y.tab.h"
 	#include <stdlib.h>
 	#include <stdio.h>
+    #include <string.h>
 	int white = 0;
 
 	extern yylval;
@@ -21,7 +22,14 @@
 "BEGIN"				{ return beginning; }
 "PRINT"				{ return PRINT; }
 "END."				{ return END; }
-\'(\\.|[^"])*\'     { return QUOTE; }
+'[^\n]*'             {   
+                    int c = input();
+                    unput(c);
+                    if(c != '\'')
+                        return QUOTE;
+                    else
+                        yymore();
+                    }  
 [a-f][a-f0-9]*		{ return ID; }
 [0-9]+				{ 	
 						yylval = atoi(yytext);

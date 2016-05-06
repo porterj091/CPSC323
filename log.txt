@@ -5,3 +5,23 @@ Printing header ...
 Found type
 Deleting Comment
 Found BEGIN Keyword
+Assignning
+Assignning
+Printing string = 
+Deleting Comment
+Recognize +
+Assignning
+Printing string = 
+Recognize *
+Recognize +
+Assignning
+Printing just ID
+Found last stat;
+Looking for more stat;
+Looking for more stat;
+Looking for more stat;
+Looking for more stat;
+Looking for more stat;
+Looking for more stat;
+Found END. Keyword
+ Terminate program
