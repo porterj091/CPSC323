@@ -1,21 +1,20 @@
-Deleting Comment
-Found PROGRAM Keyword
-Found program name
-Printing header ... 
-Found type
-Deleting Comment
-Found BEGIN Keyword
-Assignning
-Assignning
-Printing string = 
-Deleting Comment
-Recognize +
-Assignning
-Printing string = 
-Recognize *
-Recognize +
-Assignning
-Printing just ID
-Found last stat;
-Found END. Keyword
- Terminate program
+Deleting Comment on line 1
+Found PROGRAM Keyword on line 2
+Found program name on line 2
+Printing header ...  on line 2
+Found type on line 5
+Deleting Comment on line 5
+Found BEGIN Keyword on line 6
+Assignning on line 7
+Assignning on line 8
+Printing string =  on line 9
+Deleting Comment on line 10
+Recognize + on line 11
+Assignning on line 11
+Printing string =  on line 12
+Recognize * on line 14
+Recognize + on line 14
+Assignning on line 14
+Printing just ID on line 15
+Found last stat; on line 16
+Found END. Keyword Terminate program on line 16

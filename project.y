@@ -50,9 +50,9 @@ struct CaptainsLog
 
 %%
 
-line : PROGRAM{ Logging("Found PROGRAM Keyword\n"); } pname';'{ print_header(); } VAR declist';' { fprintf(c.output_file, ";\n"); } beginning { Logging("Found BEGIN Keyword\n"); }statlist END { Logging("Found END. Keyword\n Terminate program\n"); } ;
+line : PROGRAM{ Logging("Found PROGRAM Keyword"); } pname';'{ print_header(); } VAR declist';' { fprintf(c.output_file, ";\n"); } beginning { Logging("Found BEGIN Keyword"); }statlist END { Logging("Found END. Keyword Terminate program"); } ;
 
-pname 	: ID						{ $$ = $1; Logging("Found program name\n"); }
+pname 	: ID						{ $$ = $1; Logging("Found program name"); }
 		;
 declist : dec ':' type					{ printType(); }
 		| dec type				{ yyerror("Missing : "); }
@@ -64,7 +64,7 @@ dec 	: ID',' dec 					{ addString($1); }
 		;
 
 statlist	: stat';' statlist	    		{ $$ = $1; }
-			| stat';'			{ $$ = $1; Logging("Found last stat;\n"); }
+			| stat';'			{ $$ = $1; Logging("Found last stat;"); }
 			| stat				{ yyerror("Missing ;"); }
 			;
 
@@ -77,30 +77,32 @@ print	: PRINT'(' output ')'		{ $$ = $3; }
 		| PRINT '(' output			{ yyerror("Missing ) "); }
 		;
 
-output	: QUOTE',' ID              			{  Logging("Printing string = \n"); fprintf(c.output_file, "cout << %s << %s", $1, $3);}
-        | ID                        			{  Logging("Printing just ID\n"); fprintf(c.output_file, "cout << %s", $1);  }
+output	: QUOTE',' ID              			{  Logging("Printing string = "); fprintf(c.output_file, "cout << %s << %s", $1, $3);}
+        | ID                        			{  Logging("Printing just ID"); fprintf(c.output_file, "cout << %s", $1);  }
 		;
 
-assign	: ID '=' expr					{ Logging("Assignning\n"); fprintf(c.output_file, "%s = %s", $1, $3);  }
+assign	: ID '=' expr					{ Logging("Assignning"); fprintf(c.output_file, "%s = %s", $1, $3);  }
 		| ID expr				{ yyerror("Missing = "); }
 		;
 
 expr	: term						{ $$ = $1; }
-		| expr '+' term				{ $$ = $1;  Logging("Recognize +\n"); strcat($$, " + "); strcat($$, $3);}
-		| expr '-' term				{  $$ = $1; Logging("Recognize -\n"); strcat($$, " - "); strcat($$, $3);}
+		| expr '+' term				{ $$ = $1;  Logging("Recognize +"); strcat($$, " + "); strcat($$, $3);}
+		| expr '-' term				{  $$ = $1; Logging("Recognize -"); strcat($$, " - "); strcat($$, $3);}
 		;
 
-term 	: term '*' factor				{ $$ = $1;  Logging("Recognize *\n"); strcat($$, " * "); strcat($$, $3);}
-		| term '/' factor			{ $$ = $1;  Logging("Recognize /\n"); strcat($$, " / "); strcat($$, $3);}
+term 	: term '*' factor				{ $$ = $1;  Logging("Recognize *"); strcat($$, " * "); strcat($$, $3);}
+		| term '/' factor			{ $$ = $1;  Logging("Recognize /"); strcat($$, " / "); strcat($$, $3);}
 		| factor				{ $$ = $1;}
 		;
 
 factor	: ID						{ $$ = $1; }
 		| number				{  $$ = $1; }
 		| '(' expr ')'				{ $$ = $2; }
+		| expr ')'				{ yyerror("Missing ( "); }
+		| '(' expr 				{ yyerror("Missing ) "); }
 		;
 
-type	: INTEGER					{ $$ = $1; Logging("Found type\n"); }
+type	: INTEGER					{ $$ = $1; Logging("Found type"); }
 		;
 
 %%
@@ -126,7 +128,7 @@ int main(int argc, char *argv[])
 
 void print_header()
 {
-	Logging("Printing header ... \n");
+	Logging("Printing header ... ");
 	fprintf(c.output_file, "%s\n", "#include <iostream>");
 	fprintf(c.output_file, "%s\n", "using namespace std;");
 	fprintf(c.output_file, "%s\n", "int main() {");
@@ -134,7 +136,7 @@ void print_header()
 
 void Logging(const char * msg)
 {
-    fprintf(c.log_file, "%s", msg);
+    fprintf(c.log_file, "%s on line %d\n", msg, yylineno);
     
 }
 

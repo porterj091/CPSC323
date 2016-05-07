@@ -14,7 +14,7 @@
 %x C_COMMENT
 %%
 "(*"				{ BEGIN(C_COMMENT);}
-<C_COMMENT>"*)"			{ BEGIN(INITIAL); Logging("Deleting Comment\n"); }
+<C_COMMENT>"*)"			{ BEGIN(INITIAL); Logging("Deleting Comment"); }
 <C_COMMENT>. 			{}
 "PROGRAM"			{ return PROGRAM; }
 "VAR"				{ return VAR; }
