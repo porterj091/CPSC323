@@ -1,5 +1,5 @@
 %{
-
+//#define YYDEBUG 1
 void yyerror (const char *s);
 void print_header();
 void Logging(const char *msg);
@@ -7,7 +7,8 @@ void Logging(const char *msg);
 #include <stdlib.h>
 
 extern int yylineno;
-char *str[15];
+//int yydebug = 1;
+
 
 struct CaptainsLog
 {
@@ -17,6 +18,7 @@ struct CaptainsLog
 } c;
 
 %}
+%union {char *str; int num;}
 %start line
 
 
@@ -25,14 +27,16 @@ struct CaptainsLog
 %token PRINT
 %token VAR
 %token beginning
-%token INTEGER
+%token<str> INTEGER
 %token PROGRAM
 %token END
-%token ID
-%token number
-%token QUOTE
-
-
+%token<str> ID
+%token<str> number
+%token<str> QUOTE
+%type<str> pname declist statlist stat print output assign dec type 
+%type<str> term expr factor
+%left '-' '+'
+%left '*' '/'
 
 %%
 
@@ -40,51 +44,51 @@ line : PROGRAM{ Logging("Found PROGRAM Keyword\n"); } pname';'{ print_header(); 
 
 pname 	: ID						{ $$ = $1; Logging("Found program name\n"); }
 		;
-declist : dec ':' type				{ $$ = $1 + $3;  }
-		| dec type					{ yyerror("Missing : "); }
+declist : dec ':' type					{ printf("%s,\n ",$1); }//printf("%s %s\n", $1,$3);  }
+		| dec type				{ yyerror("Missing : "); }
 		;
 
-dec 	: ID',' dec 				{ $$ = $1 + $3; }
-		| ID dec					{ yyerror("Missing , "); }
-		| ID						{ $$ = $1; }
+dec 	: ID',' dec 					{ }
+		| ID dec				{ yyerror("Missing , "); }
+		| ID					{ $$ = $1;}
 		;
 
-statlist	: stat';' statlist	    { $$ = $1; Logging("Looking for more stat;\n"); }
-			| stat';'				{ $$ = $1; Logging("Found last stat;\n"); }
-			| stat					{ yyerror("Missing ;"); }
+statlist	: stat';' statlist	    		{ $$ = $1; }
+			| stat';'			{ $$ = $1; Logging("Found last stat;\n"); }
+			| stat				{ yyerror("Missing ;"); }
 			;
 
 stat	: print
-		| assign
+		| assign				{  }
 		;
 
-print	: PRINT'(' output ')'		{ $$ = $3; }
+print	: PRINT'(' output ')'				{ $$ = $3; }
 		;
 
-output	: QUOTE',' ID               { $$ = $1; Logging("Printing string = \n"); fprintf(c.output_file, "%d\n", ID);}
-        | ID                        { $$ = $1; Logging("Printing just ID\n"); }
+output	: QUOTE',' ID              			{  Logging("Printing string = \n"); printf("cout << %s << %s;\n", $1, $3);}
+        | ID                        			{  Logging("Printing just ID\n"); printf("cout << %s;\n", $1);  }
 		;
 
-assign	: ID '=' expr				{ $$ = $1; Logging("Assignning\n");}
-		| ID expr					{ yyerror("Missing = "); }
+assign	: ID '=' expr					{ Logging("Assignning\n"); printf("%s = %s\n", $1, $3);  }
+		| ID expr				{ yyerror("Missing = "); }
 		;
 
-expr	: term						{ $$ = $1; }
-		| expr '+' term				{ $$ = $1 + $3; Logging("Recognize +\n"); }	
-		| expr '-' term				{ $$ = $1 - $3; Logging("Recognize -\n"); }
+expr	: term						{ }
+		| expr '+' term				{ $$ = $3;  Logging("Recognize +\n");}//printf("%s + %s", $1,$3); }	
+		| expr '-' term				{  $$ = $3; Logging("Recognize -\n");}//printf("%s - %s", $1,$3);; }
 		;
 
-term 	: term '*' factor			{ $$ = $1 * $3; Logging("Recognize *\n"); }
-		| term '/' factor			{ $$ = $1 / $3; Logging("Recognize /\n"); }
-		| factor					{ $$ = $1; }
+term 	: term '*' factor				{ $$ = $3;  Logging("Recognize *\n");}//printf("%s * %s", $1,$3); }
+		| term '/' factor			{ $$ = $3;  Logging("Recognize /\n");}//printf("%s / %s", $1,$3); }
+		| factor				{ $$ = $1;}
 		;
 
 factor	: ID						{ $$ = $1; }
-		| number					{ $$ = $1; printf("%d", $1);}
-		| '(' expr ')'				{ $$ = $2; }
+		| number				{  $$ = $1; }
+		| '(' expr ')'				{  }
 		;
 
-type	: INTEGER					{ $$ = $1; Logging("Found type\n"); }
+type	: INTEGER					{ $$ = $1; Logging("Found type\n"); printf("int "); }
 		;
 
 %%

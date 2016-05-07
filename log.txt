@@ -17,11 +17,5 @@ Recognize +
 Assignning
 Printing just ID
 Found last stat;
-Looking for more stat;
-Looking for more stat;
-Looking for more stat;
-Looking for more stat;
-Looking for more stat;
-Looking for more stat;
 Found END. Keyword
  Terminate program

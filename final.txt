@@ -1,4 +1,4 @@
-	(*  Program Name: Spring 2015
+(*  Program Name: Spring 2015
 	     Final Project
 	     Name: Nathan Reed
 	---------------------------------------------------*)
@@ -17,4 +17,3 @@
 	   be  =  2*ab5 +  eb;
 	   PRINT(   be  )   ;
 	END.
-
