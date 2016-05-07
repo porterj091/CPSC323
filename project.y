@@ -1,13 +1,23 @@
 %{
 //#define YYDEBUG 1
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 void yyerror (const char *s);
 void print_header();
 void Logging(const char *msg);
-#include <stdio.h>
-#include <stdlib.h>
+void addString(char *s);
+void printType();
 
 extern int yylineno;
 //int yydebug = 1;
+
+// Can have 15 strings
+char str[15][5];
+
+// Will keep track of total # of variables
+int numStrings = 0;
 
 
 struct CaptainsLog
@@ -40,17 +50,17 @@ struct CaptainsLog
 
 %%
 
-line : PROGRAM{ Logging("Found PROGRAM Keyword\n"); } pname';'{ print_header(); } VAR declist';' beginning { Logging("Found BEGIN Keyword\n"); }statlist END { Logging("Found END. Keyword\n Terminate program\n"); } ;
+line : PROGRAM{ Logging("Found PROGRAM Keyword\n"); } pname';'{ print_header(); } VAR declist';' { fprintf(c.output_file, ";\n"); } beginning { Logging("Found BEGIN Keyword\n"); }statlist END { Logging("Found END. Keyword\n Terminate program\n"); } ;
 
 pname 	: ID						{ $$ = $1; Logging("Found program name\n"); }
 		;
-declist : dec ':' type					{ printf("%s,\n ",$1); }//printf("%s %s\n", $1,$3);  }
+declist : dec ':' type					{ printType(); }
 		| dec type				{ yyerror("Missing : "); }
 		;
 
-dec 	: ID',' dec 					{ }
+dec 	: ID',' dec 					{ addString($1); }
 		| ID dec				{ yyerror("Missing , "); }
-		| ID					{ $$ = $1;}
+		| ID					{ $$ = $1; addString($1); }
 		;
 
 statlist	: stat';' statlist	    		{ $$ = $1; }
@@ -58,43 +68,39 @@ statlist	: stat';' statlist	    		{ $$ = $1; }
 			| stat				{ yyerror("Missing ;"); }
 			;
 
-stat	: print
-		| assign				{  }
+stat	: print					{ $$ = $1; fprintf(c.output_file, ";\n"); }
+		| assign				{ $$ = $1; fprintf(c.output_file, ";\n"); }
 		;
 
-<<<<<<< Updated upstream
-print	: PRINT'(' output ')'				{ $$ = $3; }
-=======
 print	: PRINT'(' output ')'		{ $$ = $3; }
 		| PRINT output ')'			{ yyerror("Missing ( "); }
 		| PRINT '(' output			{ yyerror("Missing ) "); }
->>>>>>> Stashed changes
 		;
 
-output	: QUOTE',' ID              			{  Logging("Printing string = \n"); printf("cout << %s << %s;\n", $1, $3);}
-        | ID                        			{  Logging("Printing just ID\n"); printf("cout << %s;\n", $1);  }
+output	: QUOTE',' ID              			{  Logging("Printing string = \n"); fprintf(c.output_file, "cout << %s << %s", $1, $3);}
+        | ID                        			{  Logging("Printing just ID\n"); fprintf(c.output_file, "cout << %s", $1);  }
 		;
 
-assign	: ID '=' expr					{ Logging("Assignning\n"); printf("%s = %s\n", $1, $3);  }
+assign	: ID '=' expr					{ Logging("Assignning\n"); fprintf(c.output_file, "%s = %s", $1, $3);  }
 		| ID expr				{ yyerror("Missing = "); }
 		;
 
-expr	: term						{ }
-		| expr '+' term				{ $$ = $3;  Logging("Recognize +\n");}//printf("%s + %s", $1,$3); }	
-		| expr '-' term				{  $$ = $3; Logging("Recognize -\n");}//printf("%s - %s", $1,$3);; }
+expr	: term						{ $$ = $1; }
+		| expr '+' term				{ $$ = $1;  Logging("Recognize +\n"); strcat($$, " + "); strcat($$, $3);}
+		| expr '-' term				{  $$ = $1; Logging("Recognize -\n"); strcat($$, " - "); strcat($$, $3);}
 		;
 
-term 	: term '*' factor				{ $$ = $3;  Logging("Recognize *\n");}//printf("%s * %s", $1,$3); }
-		| term '/' factor			{ $$ = $3;  Logging("Recognize /\n");}//printf("%s / %s", $1,$3); }
+term 	: term '*' factor				{ $$ = $1;  Logging("Recognize *\n"); strcat($$, " * "); strcat($$, $3);}
+		| term '/' factor			{ $$ = $1;  Logging("Recognize /\n"); strcat($$, " / "); strcat($$, $3);}
 		| factor				{ $$ = $1;}
 		;
 
 factor	: ID						{ $$ = $1; }
 		| number				{  $$ = $1; }
-		| '(' expr ')'				{  }
+		| '(' expr ')'				{ $$ = $2; }
 		;
 
-type	: INTEGER					{ $$ = $1; Logging("Found type\n"); printf("int "); }
+type	: INTEGER					{ $$ = $1; Logging("Found type\n"); }
 		;
 
 %%
@@ -130,6 +136,35 @@ void Logging(const char * msg)
 {
     fprintf(c.log_file, "%s", msg);
     
+}
+
+void addString(char *s)
+{
+	if (numStrings > 14)
+	{
+		printf("Have to many variables has to be less than 15\n");
+		return;
+	}
+	
+	strcpy(str[numStrings], s);
+	numStrings += 1;
+
+}
+
+void printType()
+{
+	int i;
+	// Print the type
+	fprintf(c.output_file, "int ");
+
+	// Print all the declared variables
+	for (i = 0; i < numStrings - 1; i++ )
+	{
+		fprintf(c.output_file, "%s, ", str[i]);
+	}
+	
+	// Print the last in the array
+	fprintf(c.output_file, "%s", str[numStrings - 1]);
 }
 
 void yyerror (const char *s)
