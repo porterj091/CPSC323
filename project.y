@@ -62,7 +62,13 @@ stat	: print
 		| assign				{  }
 		;
 
+<<<<<<< Updated upstream
 print	: PRINT'(' output ')'				{ $$ = $3; }
+=======
+print	: PRINT'(' output ')'		{ $$ = $3; }
+		| PRINT output ')'			{ yyerror("Missing ( "); }
+		| PRINT '(' output			{ yyerror("Missing ) "); }
+>>>>>>> Stashed changes
 		;
 
 output	: QUOTE',' ID              			{  Logging("Printing string = \n"); printf("cout << %s << %s;\n", $1, $3);}
