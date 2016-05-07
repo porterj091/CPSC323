@@ -22,7 +22,13 @@
 "BEGIN"				{ return beginning; }
 "PRINT"				{ return PRINT; }
 "END."				{ return END; }
-'(\\.|[^\\'])*'             	{  yylval.str = strdup(yytext); return QUOTE;}  
+'(\\.|[^\\'])*'     { 
+                      int len = strlen(yytext); 
+                      yytext[0] = '\"'; 
+                      yytext[len - 1] = '\"'; 
+                      yylval.str = strdup(yytext); 
+                      return QUOTE;
+                    }  
 [a-f][a-f0-9]*			{ yylval.str = strdup(yytext); return ID; }
 [0-9]+				{ yylval.str = strdup(yytext); return number;}
 [ \t\n] 			{}
