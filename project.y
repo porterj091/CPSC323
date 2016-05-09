@@ -15,7 +15,7 @@ extern int yylineno;
 //int yydebug = 1;
 
 // Can have 15 strings
-char *str[15];
+char str[15][10];
 
 // Will keep track of total # of variables
 int numStrings = 0;
@@ -82,7 +82,7 @@ output	: QUOTE',' ID              			{  Logging("Printing string = "); checkID($
         | ID                        			{  Logging("Printing just ID"); fprintf(c.output_file, "cout << %s", $1);  }
 		;
 
-assign	: ID '=' expr					{ Logging("Assignning"); fprintf(c.output_file, "%s = %s", $1, $3);  }
+assign	: ID '=' expr					{ Logging("Assignning"); fprintf(c.output_file, "%s = %s", $1, $3);  checkID($1); }
 		| ID expr				{ yyerror("Missing = "); }
 		;
 
@@ -148,7 +148,6 @@ void addString(char *s)
 		printf("Have to many variables has to be less than 15\n");
 		return;
 	}
-    str[numStrings] = malloc(strlen(s) + 1);
 	strcpy(str[numStrings], s);
 	numStrings += 1;
 
@@ -162,6 +161,7 @@ void checkID(char *s)
     {
         if (strcmp(str[i], s) == 0)
         {
+            printf("%s equals %s\n", s, str[i]);
             stringflag = 0;
         }
     }
