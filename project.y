@@ -9,12 +9,13 @@ void print_header();
 void Logging(const char *msg);
 void addString(char *s);
 void printType();
+void checkID(char *s);
 
 extern int yylineno;
 //int yydebug = 1;
 
 // Can have 15 strings
-char str[15][5];
+char *str[15];
 
 // Will keep track of total # of variables
 int numStrings = 0;
@@ -50,7 +51,7 @@ struct CaptainsLog
 
 %%
 
-line : PROGRAM{ Logging("Found PROGRAM Keyword"); } pname';'{ print_header(); } VAR declist';' { fprintf(c.output_file, ";\n"); } beginning { Logging("Found BEGIN Keyword"); }statlist END { Logging("Found END. Keyword Terminate program"); } ;
+line : PROGRAM{ Logging("Found PROGRAM Keyword"); } pname';'{ print_header(); } VAR declist';' { fprintf(c.output_file, ";\n"); } beginning { Logging("Found BEGIN Keyword"); }statlist END { Logging("Found END. Keyword Terminate program"); }
 
 pname 	: ID						{ $$ = $1; Logging("Found program name"); }
 		;
@@ -77,7 +78,7 @@ print	: PRINT'(' output ')'		{ $$ = $3; }
 		| PRINT '(' output			{ yyerror("Missing ) "); }
 		;
 
-output	: QUOTE',' ID              			{  Logging("Printing string = "); fprintf(c.output_file, "cout << %s << %s", $1, $3);}
+output	: QUOTE',' ID              			{  Logging("Printing string = "); checkID($3); fprintf(c.output_file, "cout << %s << %s", $1, $3);}
         | ID                        			{  Logging("Printing just ID"); fprintf(c.output_file, "cout << %s", $1);  }
 		;
 
@@ -95,7 +96,7 @@ term 	: term '*' factor				{ $$ = $1;  Logging("Recognize *"); strcat($$, " * ")
 		| factor				{ $$ = $1;}
 		;
 
-factor	: ID						{ $$ = $1; }
+factor	: ID						{ $$ = $1; checkID($1); }
 		| number				{  $$ = $1; }
 		| '(' expr ')'				{ $$ = $2; }
 		| expr ')'				{ yyerror("Missing ( "); }
@@ -147,10 +148,28 @@ void addString(char *s)
 		printf("Have to many variables has to be less than 15\n");
 		return;
 	}
-	
+    str[numStrings] = malloc(strlen(s) + 1);
 	strcpy(str[numStrings], s);
 	numStrings += 1;
 
+}
+
+void checkID(char *s)
+{
+    int i;
+    int stringflag = 1;
+    for (i = 0; i < numStrings; i++)
+    {
+        if (strcmp(str[i], s) == 0)
+        {
+            stringflag = 0;
+        }
+    }
+    
+    if (stringflag == 1)
+    {
+        yyerror("UNKNOWN IDNETIFIER");
+    }
 }
 
 void printType()
