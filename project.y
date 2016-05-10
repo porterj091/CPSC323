@@ -161,7 +161,6 @@ void checkID(char *s)
     {
         if (strcmp(str[i], s) == 0)
         {
-            printf("%s equals %s\n", s, str[i]);
             stringflag = 0;
         }
     }
