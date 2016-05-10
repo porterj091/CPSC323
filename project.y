@@ -52,25 +52,26 @@ struct CaptainsLog
 %%
 
 line : PROGRAM{ Logging("Found PROGRAM Keyword"); } pname';'{ print_header(); } VAR declist';' { fprintf(c.output_file, ";\n"); } beginning { Logging("Found BEGIN Keyword"); }statlist END { Logging("Found END. Keyword Terminate program"); }
+    ;
 
 pname 	: ID						{ $$ = $1; Logging("Found program name"); }
 		;
-declist : dec ':' type					{ printType(); }
-		| dec type				{ yyerror("Missing : "); }
+declist : dec ':' type				{ printType(); }
+		| dec type                  { yyerror("Missing : "); }
 		;
 
-dec 	: ID',' dec 					{ addString($1); }
-		| ID dec				{ yyerror("Missing , "); }
-		| ID					{ $$ = $1; addString($1); }
+dec 	: ID',' dec 				{ addString($1); }
+		| ID dec                    { yyerror("Missing , "); }
+		| ID                        { $$ = $1; addString($1); }
 		;
 
-statlist	: stat';' statlist	    		{ $$ = $1; }
-			| stat';'			{ $$ = $1; Logging("Found last stat;"); }
-			| stat				{ yyerror("Missing ;"); }
+statlist	: stat';' statlist	 	{ $$ = $1; }
+			| stat';'               { $$ = $1; Logging("Found last stat;"); }
+			| stat                  { yyerror("Missing ;"); }
 			;
 
-stat	: print					{ $$ = $1; fprintf(c.output_file, ";\n"); }
-		| assign				{ $$ = $1; fprintf(c.output_file, ";\n"); }
+stat	: print                     { $$ = $1; fprintf(c.output_file, ";\n"); }
+		| assign                    { $$ = $1; fprintf(c.output_file, ";\n"); }
 		;
 
 print	: PRINT'(' output ')'		{ $$ = $3; }
@@ -78,12 +79,12 @@ print	: PRINT'(' output ')'		{ $$ = $3; }
 		| PRINT '(' output			{ yyerror("Missing ) "); }
 		;
 
-output	: QUOTE',' ID              			{  Logging("Printing string = "); checkID($3); fprintf(c.output_file, "cout << %s << %s", $1, $3);}
-        | ID                        			{  Logging("Printing just ID"); fprintf(c.output_file, "cout << %s", $1);  }
+output	: QUOTE',' ID              	{  Logging("Printing string = "); checkID($3); fprintf(c.output_file, "cout << %s << %s << endl", $1, $3);}
+        | ID                        {  Logging("Printing just ID"); fprintf(c.output_file, "cout << %s << endl", $1);  }
 		;
 
-assign	: ID '=' expr					{ Logging("Assignning"); fprintf(c.output_file, "%s = %s", $1, $3);  checkID($1); }
-		| ID expr				{ yyerror("Missing = "); }
+assign	: ID '=' expr				{ Logging("Assignning"); fprintf(c.output_file, "%s = %s", $1, $3);  checkID($1); }
+		| ID expr                   { yyerror("Missing = "); }
 		;
 
 expr	: term						{ $$ = $1; }
@@ -91,16 +92,16 @@ expr	: term						{ $$ = $1; }
 		| expr '-' term				{  $$ = $1; Logging("Recognize -"); strcat($$, " - "); strcat($$, $3);}
 		;
 
-term 	: term '*' factor				{ $$ = $1;  Logging("Recognize *"); strcat($$, " * "); strcat($$, $3);}
+term 	: term '*' factor			{ $$ = $1;  Logging("Recognize *"); strcat($$, " * "); strcat($$, $3);}
 		| term '/' factor			{ $$ = $1;  Logging("Recognize /"); strcat($$, " / "); strcat($$, $3);}
-		| factor				{ $$ = $1;}
+		| factor                    { $$ = $1;}
 		;
 
 factor	: ID						{ $$ = $1; checkID($1); }
-		| number				{  $$ = $1; }
+		| number                    {  $$ = $1; }
 		| '(' expr ')'				{ $$ = $2; }
-		| expr ')'				{ yyerror("Missing ( "); }
-		| '(' expr 				{ yyerror("Missing ) "); }
+		| expr ')'                  { yyerror("Missing ( "); }
+		| '(' expr                  { yyerror("Missing ) "); }
 		;
 
 type	: INTEGER					{ $$ = $1; Logging("Found type"); }
